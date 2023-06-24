@@ -15,8 +15,9 @@ int STATE_VALUES[] = {0x0001, 0x0002, 0x0004}; //Cleanly unmounted, errors detec
 int ERRORS_VALUES[] = {1, 2, 3}; // Continue, remount read-only, panic
 int CREATOR_OS_VALUES[] = {0, 1, 2, 3, 4}; // Linux, Hurd, Masix, FreeBSD, Lites
 bool REVISION_LEVEL; // False is original, True is v2 (dynamic inode sizes)
+int FEATURE_COMPAT_VALUES[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200}; //for info on these flag values, refer to the docs !!!values not in this array will not cause the parser to crash, theyh will just be ignored
 
-struct ext4_sblock {
+typedef struct ext4_sblocks {
 	int s_inodes_count;
 	int s_blocks_count_lo;
 	int s_r_blocks_count_lo;
@@ -43,10 +44,18 @@ struct ext4_sblock {
 	short s_def_resuid;
 	short s_def_resgid;
 
-};
+} ext4_sblock;
 
+typedef struct ext4_sblocks_drev {
+	int s_first_ino;
+	short s_inode_size;
+	short s_block_group_nr;
+	int s_feature_compat; // valid values in global var FEATURE_COMPAT_VALUES
+
+} ext4_sblock_drev;
 int main() {
+	ext4_sblock test;
 	int BLOCK_SIZE = BLOCK_SIZE_VALUES[2];
 	printf("%d\n", BLOCK_SIZE);
-	printf("%d", sizeof(short));
+	printf("%d", sizeof(test));
 }

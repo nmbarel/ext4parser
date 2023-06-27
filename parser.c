@@ -22,7 +22,7 @@ int FEATURE_RO_COMPAT_VALUES[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x
 uint8_t DEF_HASH_VERSION_VALUES[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5}; // default hash algorithm, valid values are in the docs
 int DEFAULT_MOUNT_OPTS_VALUES[] = {0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0060, 0x0100, 0x0200, 0x0400, 0x0800}; // default mount options
 int FLAGS_VALUES[] = {0x0001, 0x0002, 0x0004}; // signed dir hash, unsigned dir hash, test dev code
-
+uint8_t ENCRYPT_ALGOS_VALUES[] = {0, 1, 2, 3}; // info in docs
 
 typedef struct ext4_sblocks {
 	int s_inodes_count;
@@ -60,7 +60,7 @@ typedef struct ext4_sblocks_drevs {
 	short s_block_group_nr;
 	int s_feature_compat; // valid values in global var FEATURE_COMPAT_VALUES
 	int s_feature_incompat; // valid values in global var FEATURE_INCOMPAT_VALUES
-        int s_feature_ro_compat; // valid values in global var FEATURE_RO_COMPAT
+    int s_feature_ro_compat; // valid values in global var FEATURE_RO_COMPAT
 	uint8_t s_uuid[16]; // 128-bit UUID for volume
 	char s_volume_name[16];
 	char s_last_mounted[64]; // where file system was last mounted
@@ -75,7 +75,7 @@ typedef struct ext4_sblocks_drevs {
 	int s_journal_inum;
 	int s_journal_dev;
 	int s_last_orphan;
-        int s_hash_seed[4];
+    int s_hash_seed[4];
 	uint8_t s_def_hash_version; // valid values in global var DEF_HASH_VERSION_VALUES	
 	uint8_t s_jnl_backup_type;
 	short s_desc_size; 
@@ -91,12 +91,48 @@ typedef struct ext4_sblocks_drevs {
 	short s_min_extra_isize;
 	short s_want_extra_isize;
 	int s_flags; // valid values in global var FLAGS_VALUES
+	short s_raid_stride;
+	long s_mmp_interval;
+	int s_raid_stripe_width;
+	uint8_t s_log_groups_per_flex;
+	uint8_t s_checksum_type; // not used in e2fsprogs/linux
+	short s_reserved_pad;
+	long s_kbytes_written;
+	int s_snapshot_inum; // not used in e2fsprogs/linux
+	int s_snapshot_id; // not used in e2fsprogs/linux
+	long s_snapshot_r_blocks_count; // not used in e2fsprogs/linux
+	int s_snapshot_list; // not used in e2fsprogs/linux
+	int s_error_count;
+	int s_first_error_time;
+	int s_first_error_ino;
+	long s_first_error_block;
+	uint8_t s_first_error_func[32];
+	int s_first_error_line;
+	int s_last_error_time;
+	int s_last_error_ino;
+	int s_last_error_line;
+	long s_last_error_block;
+	uint8_t s_last_error_funcp[32];
+	uint8_t s_mount_opts[64];
+	int s_usr_quota_inum;
+	int s_grp_quota_inum;
+	int s_overhead_blocks; // always zero, calculated dynamically by the kernel
+	int s_backup_bgs[2];
+	uint8_t s_encrypt_algos[4]; // valid values in global var ENCRYPT_ALGOS_VALUES
+	uint8_t s_encrypt_pw_salt[16];
+	int s_lpf_ino;
+	int s_prj_quota_inum;
+	int s_checksum_seed;
+	int s_reserved[98];
+	int s_checksum;
 
 } ext4_sblock_drev;
 
 int main() {
 	ext4_sblock test;
+	ext4_sblock_drev test2;
 	int BLOCK_SIZE = BLOCK_SIZE_VALUES[2];
 	printf("%d\n", BLOCK_SIZE);
-	printf("%ld", sizeof(ext4_sblocks_drev));
+	printf("%ld\n", sizeof(test));
+	printf("%ld\n", sizeof(test2));
 }

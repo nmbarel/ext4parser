@@ -23,6 +23,7 @@ uint8_t DEF_HASH_VERSION_VALUES[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5}; // default h
 int DEFAULT_MOUNT_OPTS_VALUES[] = {0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0060, 0x0100, 0x0200, 0x0400, 0x0800}; // default mount options
 int FLAGS_VALUES[] = {0x0001, 0x0002, 0x0004}; // signed dir hash, unsigned dir hash, test dev code
 uint8_t ENCRYPT_ALGOS_VALUES[] = {0, 1, 2, 3}; // info in docs
+short BG_FLAGS_VALUES[] = {0x1, 0x2, 0x4}; // info in docs
 
 typedef struct ext4_sblocks {
 	int s_inodes_count;
@@ -54,7 +55,7 @@ typedef struct ext4_sblocks {
 } ext4_sblock;
 
 typedef struct ext4_sblocks_drevs {
-	struct ext4_sblock;
+	ext4_sblock regular_sblock;
 	int s_first_ino;
 	short s_inode_size;
 	short s_block_group_nr;
@@ -128,11 +129,48 @@ typedef struct ext4_sblocks_drevs {
 
 } ext4_sblock_drev;
 
+
+typedef struct ext4_group_descs_32bit{
+	int bg_block_bitmap_lo;
+	int bg_inode_bitmap_lo;
+	int bg_inode_table_lo;
+	short bg_free_blocks_count_lo;
+	short bg_free_inodes_count_lo;
+	short bg_used_dirs_count_lo;
+	short bg_users_dirs_count_lo;
+	short bg_flags; // valid values are in global var BG_FLAGS_VALUES
+	int bg_exclude_bitmap_lo;
+	short bg_block_bitmap_csum_lo;
+	short bg_inode_bitmap_csum_lo;
+	short bg_itable_unused_lo;
+	short bg_checksum;
+
+} ext4_group_desc_32bit;
+
+typedef struct ext4_group_descs_64bit {
+	ext4_group_desc_32bit regular_group_desc;
+	int bg_block_bitmap_hi;
+	int bg_inode_bitmap_hi;
+	int bg_inode_table_hi;
+	short bg_free_blocks_count_hi;
+	short bg_free_inodes_count_hi;
+	short bg_used_dirs_count_hi;
+	short bg_itable_unused_hi;
+	int bg_exclude_bitmap_hi;
+	short bg_block_bitmap_csum_hi;
+	short bg_inode_bitmap_csum_hi;
+	uint32_t bg_reserved; // padding
+} ext4_group_desc_64bit;
+
+
+
 int main() {
 	ext4_sblock test;
 	ext4_sblock_drev test2;
+	ext4_group_desc_64bit test3;
 	int BLOCK_SIZE = BLOCK_SIZE_VALUES[2];
 	printf("%d\n", BLOCK_SIZE);
-	printf("%ld\n", sizeof(test));
 	printf("%ld\n", sizeof(test2));
+	printf("%ld\n", sizeof(test3));
+
 }
